@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>xvw - Méthodes gardées</title>
-    <meta name="description" content="Implémentation de &apos;guarded methods&apos; en utilisant des témoins d&apos;égalités de types.">
+    <meta name="description" content="Implémentation de &quot;méthodes gardées&quot; en utilisant des témoins d&apos;égalités de types.">
     <meta name="keywords" content="capsule, programmation, type, oop, ocaml, gadt">
     <meta name="author" content="Xavier Van de Woestyne">
     <link rel="stylesheet" href="/capsule/css/fonts.css">
@@ -63,15 +63,17 @@
 </li>
 </ul>
 </section><article><p>Les <em>défenseurs</em> de la <strong>programmation orientée objets</strong> défendent souvent cette
-dernière en affirmant que &quot;<em>la manière normale de raisonner l'ensemble des
-objets du métier</em>&quot; et qu'elle permet de modèliser efficacement l'ensemble des
-structures de données de manière uniforme. Pourtant, beaucoup de critiques sont
-parfois formulées à l'encontre de cette approche (&quot;<em>beaucoup</em>&quot; est à prendre
-avec des pincettes car l'OOP est encore et toujours l'approche la plus populaire
-aujourd'hui). Dans les critiques formulées, nous allons nous intéresser tout
-particulièrement à <strong>l'absence de méthodes gardées</strong>, qui n'est pas,
-objectivement, reliée à l'orienté objets, car il serait envisageable de les
-intégrer, mais qui manque dans beaucoup de langages OOP populaires.</p>
+dernière en affirmant que c'est &quot;<em>la manière normale de raisonner (sur)
+l'ensemble des objets du métier</em>&quot; et qu'elle permet de modèliser efficacement
+l'ensemble des structures de données de manière uniforme. Pourtant, beaucoup de
+critiques sont parfois formulées à l'encontre de cette approche (&quot;<em>beaucoup</em>&quot;
+est à prendre avec des pincettes car l'OOP est encore et toujours l'approche la
+plus populaire aujourd'hui, du moins selon leur représentation sur
+<a href="https://github.com">Github</a> ou <a href="https://stackoverflow.com/">StackOverflow</a>).
+Dans les critiques formulées, nous allons nous intéresser tout particulièrement
+à <strong>l'absence de méthodes gardées</strong>, qui n'est pas, objectivement, reliée à
+l'orienté objets, car il serait envisageable de les intégrer, mais qui manque
+dans beaucoup de langages OOP populaires.</p>
 <h2 id="prsentation-du-problme">Présentation du problème</h2>
 <p>Quand un langage (dont les vérification des types est effectuée avant
 l'exécution du programme, comme en Java ou en OCaml) introduit du
@@ -126,9 +128,9 @@ fun &lt;A&gt; MyList&lt;MyList&lt;A&gt;&gt;.flatten() = ...
 </code></pre>
 <p>Même si la solution semble proche de la perfection, elle impose tout de même la
 définition de la méthodes <strong>en dehors de la classe</strong> ce qui pourrait
-potentiellement impliquer de devoir potentiellement rendre certaines membres de
-la classe <em>publiques</em> en vue d'être exploitable par une extension. Cependant
-elles permettent tout de même <strong>de garder l'approche systèmatique de l'envoi de
+potentiellement impliquer de devoir rendre certaines membres de la classe
+<em>publiques</em> en vue d'être exploitable par une extension. Cependant elles
+permettent tout de même <strong>de garder l'approche systèmatique de l'envoi de
 messages tout en offrant la possibilité de qualifier plus finement le
 receveur</strong>.</p>
 <h3 id="les-mthodes-gardes">Les méthodes gardées</h3>
@@ -159,7 +161,8 @@ représentations)
 </ul>
 <p>Même si les méthodes gardées semblent être nécéssaires, je ne connais
 malheureusement pas de langages <em>mainstream</em> qui permettent leur définition.
-Voila qui est très triste. Heureusement, en OCaml, il est possible des <em>encoder</em>.</p>
+Voila qui est très triste. Heureusement, en OCaml, il est possible de les
+<em>encoder</em>.</p>
 <h3 id="la-symtrie-oopfp--thorie-et-pratique">La symétrie OOP/FP : théorie et pratique</h3>
 <p>Comme les méthodes gardées sont assez rares dans les langages de programmation
 populaires j'ai découvert leur existence assez récemment, en lisant les
@@ -179,7 +182,7 @@ entre l'implémentation de la fonction <code>flatten</code> dans un style foncti
 classique :</p>
 <pre><code class="language-ocaml">type 'a list = ...
 let rec length : 'a list -&gt; int = ...
-let rec concat : 'a list -&gt; 'a list = ...
+let rec concat : 'a list -&gt; 'a list -&gt; 'a list = ...
 
 let rec flatten : 'a list list -&gt; 'a list = function
   | [] -&gt; []
@@ -196,7 +199,7 @@ type donner à <code>flatten</code>:</p>
 end
 </code></pre>
 <p>Il propose donc cette syntaxe, qui implique une garde sur la méthode <code>flatten</code>:</p>
-<pre><code class="language-ocaml">method flatten : 'b list with 'a = 'b list
+<pre><code class="language-ocaml">method flatten : 'b olist with 'a = 'b olist
 </code></pre>
 <p>Cette syntaxe permet de décrire une méthode gardée et pourrait se généraliser de
 cette manière : <code>method method_name : return_type with generic_type = other_type</code>.
@@ -210,7 +213,7 @@ une méthode <code>sum</code> si les habitants de la liste sont des entiers:</p>
 <pre><code class="language-ocaml">class type ['a] olist = object
   method length : int
   method concat : 'a olist -&gt; 'a olist
-  method flatten : 'b list with 'a = 'b list
+  method flatten : 'b olist with 'a = 'b olist
   method sum : int with 'a = int
 end
 </code></pre>
@@ -260,7 +263,7 @@ que deux types <em>syntaxiquement différents</em> sont en fait égaux.</p>
 <h3 id="contraindre-avec-eq">Contraindre avec <code>eq</code></h3>
 <p>Reprenons notre exemple qui fournit une API objet à une liste. Voici son interface:</p>
 <pre><code class="language-ocaml">class type ['a] obj_list = 
-  object ('self')
+  object ('self)
     method length : int
     method append : 'a list -&gt; 'a obj_list
     method uncons : ('a * 'self) option
@@ -286,7 +289,7 @@ implémenter :</p>
     method append x = {&lt;l = List.append l x&gt;}
     method uncons = match l with [] -&gt; None | x :: xs -&gt; Some (x, {&lt;l = xs&gt;})
     
-    method flatten = assert false
+    method flatten = ???
   end
 </code></pre>
 <p>Maintenant, intéressons-nous à <code>flatten</code>. On va récursivement parcourir
