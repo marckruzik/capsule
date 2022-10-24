@@ -314,7 +314,7 @@ Premièrement ajoutons <code>sum</code> à notre interface. Cette fois, on veut 
 notre paramètre de type à être <code>int</code>. Pour cela, il suffit de prendre
 <code>('a, int) eq</code> comme témoin d'égalité:</p>
 <pre><code class="language-ocaml">class type ['a] obj_list = 
-  object ('self')
+  object ('self)
     method length : int
     method append : 'a list -&gt; 'a obj_list
     method uncons : ('a * 'self) option
