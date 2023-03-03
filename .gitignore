@@ -32,3 +32,9 @@ _opam/
 
 # Node js
 node_modules/
+
+# Ligo
+.ligo-work
+_esy
+.ligo
+esy.lock

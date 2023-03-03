@@ -15,7 +15,7 @@ tags:
 toc: false
 indexes:
   - name: Sur Tezos
-    sort: true
+    sort: false
     synopsis:
       Même si, dans un futur idéal, je développerai des applications sur un maximum
       de technologies, pour prendre conscience de ce que fait la concurrence, il est
@@ -24,6 +24,8 @@ indexes:
     links:
       - name: Transfer
         href: /dapps/transfer/
+      - name: Benefactor
+        href: /dapps/benefactor/
 ---
 
 > Une **dApp** (pour _"Application décentralisée"_) peut être grossièrement

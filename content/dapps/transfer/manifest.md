@@ -6,7 +6,8 @@ synopsis: Une toute petite _dApp_ qui ne sert qu'à expérimenter le _binding_
   l'implémentation du _framework_ [Tezos](https://tezos.com).
 tags:
   - tezos
-  - ligo
+  - dapp
+  - transfer
 toc: false
 breadcrumb:
   - name: Catalogue de DApps
