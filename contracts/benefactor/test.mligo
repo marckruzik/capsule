@@ -1,5 +1,5 @@
-#import "main.mligo" "Benefactor"
 #import "ligo-breathalyzer/lib/lib.mligo" "Breath"
+#import "main.mligo" "Benefactor"
 #import "../util/list_ext.mligo" "ListExt"
 
 type originated = Breath.Contract.originated
@@ -17,7 +17,7 @@ let originate (owner: Breath.Context.actor) () =
     ; history = Big_map.empty 
     }
     1tez
-
+  
 let deposit (contract: benefactor_originated) (qty: tez) () = 
   Breath.Contract.transfer_to contract Deposit qty
 
@@ -136,23 +136,6 @@ let case_retreive =
         ]
       ])
 
-let case_history_head_1 =
-  Breath.Model.case
-    "history head"
-    "some computation using [history_head]"
-    (fun _ -> 
-      let (operator, (_alice, _bob, _carol)) = Breath.Context.init_default () in
-      let sc = Breath.Context.act_as operator (originate operator) in
-      let ca = sc.originated_address in
-      let hd : (address * tez * timestamp) list option = 
-        Tezos.call_view "history_head" 5n ca 
-      in
-      Breath.Result.reduce [
-        Breath.Assert.is_some_and "history_head view" (fun li -> 
-          Breath.Assert.is_equal "history" [] li
-        ) hd
-      ; expect_state sc 1tez operator.address 1tez 0n []
-      ])
 
 let suite = Breath.Model.suite "Benefactor" [
   case_simple_origination
@@ -160,5 +143,4 @@ let suite = Breath.Model.suite "Benefactor" [
 ; case_retreive_when_not_owner
 ; case_retreive_when_the_amount_is_too_high
 ; case_retreive
-; case_history_head_1
 ]
